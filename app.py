@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 
 app = Flask(__name__)
 
@@ -8,17 +8,22 @@ PASSWORD = "admin123"
 
 @app.route("/")
 def home():
+    return render_template("index.html")
+
+
+@app.route("/login")
+def login_page():
     return render_template("login.html")
 
 
-@app.route("/login", methods=["POST"])
-def login():
+@app.route("/authenticate", methods=["POST"])
+def authenticate():
 
-    email = request.form.get("email")
-    password = request.form.get("password")
+    email = request.form.get("email", "").strip()
+    password = request.form.get("password", "").strip()
 
-    if email == "malli@gmail.com" and password == "Malli123":
-        return render_template("index.html")
+    if email == EMAIL and password == PASSWORD:
+        return redirect(url_for("home"))
 
     return render_template(
         "login.html",
