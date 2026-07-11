@@ -29,7 +29,30 @@ def authenticate():
         "login.html",
         error="Invalid Email or Password"
     )
+@app.route("/register")
+def register_page():
+    return render_template("register.html")
 
+
+@app.route("/register", methods=["POST"])
+def register():
+
+    name = request.form.get("name")
+    email = request.form.get("email")
+    phone = request.form.get("phone")
+    password = request.form.get("password")
+    confirm = request.form.get("confirm_password")
+
+    if password != confirm:
+        return "Passwords do not match"
+
+    # Database code will be added later
+
+    return redirect(url_for("login_page"))
+
+@app.route("/product")
+def product():
+    return render_template("product-details.html")
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
