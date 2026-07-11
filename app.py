@@ -17,7 +17,7 @@ def login():
     email = request.form.get("email")
     password = request.form.get("password")
 
-    if email == EMAIL and password == PASSWORD:
+    if email == "malli@gmail.com" and password == "Malli123":
         return render_template("index.html")
 
     return render_template(
