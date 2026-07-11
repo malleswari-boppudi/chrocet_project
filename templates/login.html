@@ -105,7 +105,11 @@
         <div class="brand">Chrocet</div>
 
         <p class="subtitle">Handmade with Love ❤️</p>
-
+        {% if error %}
+        <div class="alert alert-danger">
+            {{ error }}
+        </div>
+        {% endif %}
         <form action="/login" method="POST">
             <div class="mb-3">
                 <label>Email Address</label>

@@ -1,30 +1,30 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
-users = {
-    "admin@gmail.com": "admin123"
-}
+EMAIL = "admin@gmail.com"
+PASSWORD = "admin123"
+
 
 @app.route("/")
 def home():
     return render_template("login.html")
 
+
 @app.route("/login", methods=["POST"])
 def login():
 
-    email = request.form["email"]
-    password = request.form["password"]
+    email = request.form.get("email")
+    password = request.form.get("password")
 
-    if email in users and users[email] == password:
-        return redirect(url_for("dashboard"))
+    if email == EMAIL and password == PASSWORD:
+        return render_template("index.html")
 
-    return "Invalid Email or Password"
-
-@app.route("/dashboard")
-def dashboard():
-    return render_template("index.html")
+    return render_template(
+        "login.html",
+        error="Invalid Email or Password"
+    )
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
