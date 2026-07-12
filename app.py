@@ -39,7 +39,7 @@ def authenticate():
         "login.html",
         error="Invalid Email or Password"
     )
-    
+
 @app.route("/register")
 def register_page():
     return render_template("register.html")
@@ -79,12 +79,13 @@ def test():
 
         return str(e)
 #connection to Database code
+app = Flask(__name__)
 
-class Config:
+app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://admin:Malli123@database-1.ct2ke66uqwus.us-east-1.rds.amazonaws.com:3306/chrocet"
 
-    SQLALCHEMY_DATABASE_URI = "mysql+pymysql://admin:Malli123@database-1.ct2ke66uqwus.us-east-1.rds.amazonaws.com:3306/chrocet"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
+db = SQLAlchemy(app)
 
 class User(db.Model):
 
