@@ -106,9 +106,9 @@ def authenticate():
 
     if user and check_password_hash(user.password, password):
 
-    session["user_id"] = user.id
-    session["user_name"] = user.name
-    session["email"] = user.email
+        session["user_id"] = user.id
+        session["user_name"] = user.name
+        session["email"] = user.email
 
     return redirect(url_for("home"))
 
