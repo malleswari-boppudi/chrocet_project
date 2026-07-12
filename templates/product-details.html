@@ -58,108 +58,18 @@
             </div>
         </div>
     </nav>
+    <h2>{{ product.name }}</h2>
 
-    <div class="container py-5">
-        <div class="row g-5">
-            <div class="col-lg-6">
-                <img id="mainImg" src="{{ url_for('static', filename='images/teddy_sale.jpeg') }}"
-                    class="img-fluid rounded shadow">
-                <div class="row mt-3">
-                    <div class="col-3"><img class="img-fluid rounded thumb" onclick="swap(this)"
-                            src="{{ url_for('static', filename='images/teddy_sale.jpeg') }}"></div>
-                    <div class="col-3"><img class="img-fluid rounded thumb" onclick="swap(this)"
-                            src="{{ url_for('static', filename='images/flower_bouquet_sale.jpg') }}"></div>
-                    <div class="col-3"><img class="img-fluid rounded thumb" onclick="swap(this)"
-                            src="{{ url_for('static', filename='images/handbag_sale.webp') }}"></div>
-                    <div class="col-3"><img class="img-fluid rounded thumb" onclick="swap(this)"
-                            src="{{ url_for('static', filename='images/keychain_display.jpg') }}"></div>
-                </div>
-            </div>
+    <p class="price">
+        ₹{{ product.price }}
+    </p>
 
-            <div class="col-lg-6">
-                <h2>Crochet Teddy</h2>
-                <p class="text-warning">★★★★★ (124 Reviews)</p>
-                <p class="price">₹2400 <small class="text-decoration-line-through text-muted fs-5">₹2999</small></p>
-                <p>Premium handmade crochet teddy crafted with soft cotton yarn. Perfect for gifting and home décor.</p>
+    <p>
+        {{ product.description }}
+    </p>
 
-                <label class="fw-bold">Quantity</label>
-                <input type="number" class="form-control w-25 mb-3" min="1" value="1">
-
-                <div class="d-grid gap-2 d-md-flex">
-                    <button class="btn btn-theme btn-lg">🛒 Add to Cart</button>
-                    <button class="btn btn-success btn-lg">⚡ Buy Now</button>
-                </div>
-
-                <hr>
-                <h4>Description</h4>
-                <ul>
-                    <li>100% Handmade</li>
-                    <li>Premium Cotton Yarn</li>
-                    <li>Washable</li>
-                    <li>Custom Colors Available</li>
-                </ul>
-
-                <h4>Specifications</h4>
-                <table class="table">
-                    <tr>
-                        <th>Material</th>
-                        <td>Cotton Yarn</td>
-                    </tr>
-                    <tr>
-                        <th>Height</th>
-                        <td>25 cm</td>
-                    </tr>
-                    <tr>
-                        <th>Weight</th>
-                        <td>300 g</td>
-                    </tr>
-                    <tr>
-                        <th>Made In</th>
-                        <td>India</td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-
-        <section class="mt-5">
-            <h3>Customer Reviews</h3>
-            <div class="card p-3 mb-3"><b>Emma</b><br>⭐⭐⭐⭐⭐<br>Beautiful craftsmanship.</div>
-            <div class="card p-3"><b>Olivia</b><br>⭐⭐⭐⭐⭐<br>Loved the quality and finishing.</div>
-        </section>
-
-        <section class="mt-5">
-            <h3>Related Products</h3>
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="card"><img src="{{ url_for('static', filename='images/flower_bouquet_sale.jpg') }}"
-                            class="card-img-top">
-                        <div class="card-body">
-                            <h5>Flower Bouquet</h5>
-                            <p>₹1500</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card"><img src="{{ url_for('static', filename='images/handbag_sale.webp') }}"
-                            class="card-img-top">
-                        <div class="card-body">
-                            <h5>Handbag</h5>
-                            <p>₹800</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card"><img src="{{ url_for('static', filename='images/keychain_display.jpg') }}"
-                            class="card-img-top">
-                        <div class="card-body">
-                            <h5>Keychain</h5>
-                            <p>₹250</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </div>
+    <img id="mainImg" src="{{ url_for('static', filename='images/' + product.image) }}"
+        class="img-fluid rounded shadow">
 
     <footer class="text-center py-4 mt-5">
         © 2026 Hooked by Malli

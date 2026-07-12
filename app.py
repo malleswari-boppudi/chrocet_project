@@ -26,17 +26,30 @@ class User(db.Model):
     phone = db.Column(db.String(20))
     password = db.Column(db.String(255), nullable=False)
 
-
+class Product(db.Model):
+    __tablename__ = "products"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    description = db.Column(db.Text)
+    price = db.Column(db.Float)
+    image = db.Column(db.String(255))
+    stock = db.Column(db.Integer)
+    category = db.Column(db.String(100))
 # ==========================
 # Routes
 # ==========================
 
 @app.route("/")
 def home():
+
     username = session.get("user_name")
+
+    products = Product.query.all()
+
     return render_template(
         "index.html",
-        username=username
+        username=username,
+        products=products
     )
 
 @app.route("/login")
@@ -53,9 +66,18 @@ def register_page():
     return render_template("register.html")
 
 
-@app.route("/product")
-def product():
-    return render_template("product-details.html")
+@app.route("/product/<int:id>")
+def product(id):
+
+    product = Product.query.get_or_404(id)
+
+    username = session.get("user_name")
+
+    return render_template(
+        "product-details.html",
+        product=product,
+        username=username
+    )
 
 
 # ==========================
