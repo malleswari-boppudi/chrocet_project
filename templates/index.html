@@ -304,11 +304,13 @@
                             <h4>{{ product.name }}</h4>
                             <p class="fw-bold text-primary"> ₹{{ product.price }} </p>
                             <a href="/product/{{ product.id }}" class="btn btn-outline-dark">View Details</a>
-                            <button class="btn btn-shop w-100 mt-3">Add to Cart</button>
+                            <form action="/add_to_cart/{{ product.id }}" method="POST">
+                                <button type="submit" class="btn btn-shop w-100 mt-3">Add to Cart</button>
+                            </form>
                         </div>
 
                     </div>
-                    
+
                 </div>
                 {% endfor %}
             </div>

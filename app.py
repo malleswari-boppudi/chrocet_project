@@ -78,7 +78,134 @@ def product(id):
         product=product,
         username=username
     )
-    
+# ==========================
+# Add to Cart
+# ==========================
+@app.route("/add_to_cart/<int:product_id>", methods=["POST"])
+def add_to_cart(product_id):
+
+    if "user_id" not in session:
+        return redirect("/login")
+
+    user_id = session["user_id"]
+
+    cursor = mysql.connection.cursor()
+
+    cursor.execute("""
+        SELECT * FROM cart
+        WHERE user_id=%s AND product_id=%s
+    """, (user_id, product_id))
+
+    item = cursor.fetchone()
+
+    if item:
+        cursor.execute("""
+            UPDATE cart
+            SET quantity = quantity + 1
+            WHERE user_id=%s AND product_id=%s
+        """, (user_id, product_id))
+
+    else:
+        cursor.execute("""
+            INSERT INTO cart(user_id, product_id, quantity)
+            VALUES(%s,%s,1)
+        """, (user_id, product_id))
+
+    mysql.connection.commit()
+    cursor.close()
+
+    return redirect("/cart")  
+
+@app.route("/cart")
+def cart():
+
+    if "user_id" not in session:
+        return redirect("/login")
+
+    cursor = mysql.connection.cursor()
+
+    cursor.execute("""
+    SELECT
+        cart.id,
+        products.id,
+        products.name,
+        products.price,
+        products.image,
+        cart.quantity,
+        (products.price * cart.quantity) AS total
+
+    FROM cart
+
+    JOIN products
+    ON cart.product_id = products.id
+
+    WHERE cart.user_id=%s
+    """, (session["user_id"],))
+
+    cart_items = cursor.fetchall()
+
+    grand_total = sum(item[6] for item in cart_items)
+
+    cursor.close()
+
+    return render_template(
+        "cart.html",
+        cart_items=cart_items,
+        grand_total=grand_total
+    )
+# ==========================
+# Increase Cart Item Quantity
+# ==========================
+@app.route("/increase/<int:cart_id>")
+def increase(cart_id):
+
+    cursor = mysql.connection.cursor()
+
+    cursor.execute("""
+    UPDATE cart
+    SET quantity = quantity + 1
+    WHERE id=%s
+    """, (cart_id,))
+
+    mysql.connection.commit()
+    cursor.close()
+
+    return redirect("/cart")
+# ==========================
+# Decrease Cart Item Quantity
+# ==========================
+@app.route("/decrease/<int:cart_id>")
+def decrease(cart_id):
+
+    cursor = mysql.connection.cursor()
+
+    cursor.execute("""
+    UPDATE cart
+    SET quantity = quantity - 1
+    WHERE id=%s AND quantity>1
+    """, (cart_id,))
+
+    mysql.connection.commit()
+    cursor.close()
+
+    return redirect("/cart")
+# ==========================
+# Remove Cart Item
+# ==========================
+@app.route("/remove/<int:cart_id>")
+def remove(cart_id):
+
+    cursor = mysql.connection.cursor()
+
+    cursor.execute("""
+    DELETE FROM cart
+    WHERE id=%s
+    """, (cart_id,))
+
+    mysql.connection.commit()
+    cursor.close()
+
+    return redirect("/cart")
 # ==========================
 # Register User
 # ==========================
