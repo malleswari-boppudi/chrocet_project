@@ -1,8 +1,10 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
+
+app.secret_key = "malleswari_secret_key"
 
 # ==========================
 # Database Configuration
@@ -31,13 +33,20 @@ class User(db.Model):
 
 @app.route("/")
 def home():
-    return render_template("index.html")
-
+    username = session.get("user_name")
+    return render_template(
+        "index.html",
+        username=username
+    )
 
 @app.route("/login")
 def login_page():
     return render_template("login.html")
 
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("home"))
 
 @app.route("/register")
 def register_page():
@@ -96,7 +105,12 @@ def authenticate():
     user = User.query.filter_by(email=email).first()
 
     if user and check_password_hash(user.password, password):
-        return redirect(url_for("home"))
+
+    session["user_id"] = user.id
+    session["user_name"] = user.name
+    session["email"] = user.email
+
+    return redirect(url_for("home"))
 
     return render_template(
         "login.html",

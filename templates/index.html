@@ -163,7 +163,27 @@
 
                     <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
 
-                    <li class="nav-item"><a class="nav-link" href="/login">Login / Signup</a></li>
+                    {% if username %}
+
+                    <span class="me-3 fw-bold">
+                        👋 Welcome, {{ username }}
+                    </span>
+
+                    <a href="/logout" class="btn btn-danger">
+                        Logout
+                    </a>
+
+                    {% else %}
+
+                    <a href="/login" class="btn btn-outline-dark">
+                        Login
+                    </a>
+
+                    <a href="/register" class="btn btn-warning">
+                        Register
+                    </a>
+
+                    {% endif %}
 
                 </ul>
 
