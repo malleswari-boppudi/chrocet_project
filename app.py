@@ -35,6 +35,28 @@ class Product(db.Model):
     image = db.Column(db.String(255))
     stock = db.Column(db.Integer)
     category = db.Column(db.String(100))
+
+class Cart(db.Model):
+    __tablename__ = "cart"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("users.id"),
+        nullable=False
+    )
+
+    product_id = db.Column(
+        db.Integer,
+        db.ForeignKey("products.id"),
+        nullable=False
+    )
+
+    quantity = db.Column(db.Integer, default=1)
+
+    user = db.relationship("User", backref="cart_items")
+    product = db.relationship("Product")
 # ==========================
 # Routes
 # ==========================
@@ -79,74 +101,54 @@ def product(id):
         username=username
     )
 # ==========================
-# Add to Cart
+# Cart route
 # ==========================
 @app.route("/add_to_cart/<int:product_id>", methods=["POST"])
 def add_to_cart(product_id):
 
     if "user_id" not in session:
-        return redirect("/login")
+        return redirect(url_for("login"))
 
+    product_id = request.view_args["product_id"]
     user_id = session["user_id"]
 
-    cursor = mysql.connection.cursor()
+    cart_item = Cart.query.filter_by(
+        user_id=user_id,
+        product_id=product_id
+    ).first()
 
-    cursor.execute("""
-        SELECT * FROM cart
-        WHERE user_id=%s AND product_id=%s
-    """, (user_id, product_id))
-
-    item = cursor.fetchone()
-
-    if item:
-        cursor.execute("""
-            UPDATE cart
-            SET quantity = quantity + 1
-            WHERE user_id=%s AND product_id=%s
-        """, (user_id, product_id))
+    if cart_item:
+        cart_item.quantity += 1
 
     else:
-        cursor.execute("""
-            INSERT INTO cart(user_id, product_id, quantity)
-            VALUES(%s,%s,1)
-        """, (user_id, product_id))
+        cart_item = Cart(
+            user_id=user_id,
+            product_id=product_id,
+            quantity=1
+        )
 
-    mysql.connection.commit()
-    cursor.close()
+        db.session.add(cart_item)
 
-    return redirect("/cart")  
+    db.session.commit()
 
+    return redirect(url_for("cart")) 
+# =========================
+# View Cart
+# =========================
 @app.route("/cart")
 def cart():
 
     if "user_id" not in session:
-        return redirect("/login")
+        return redirect(url_for("login"))
 
-    cursor = mysql.connection.cursor()
+    cart_items = Cart.query.filter_by(
+        user_id=session["user_id"]
+    ).all()
 
-    cursor.execute("""
-    SELECT
-        cart.id,
-        products.id,
-        products.name,
-        products.price,
-        products.image,
-        cart.quantity,
-        (products.price * cart.quantity) AS total
-
-    FROM cart
-
-    JOIN products
-    ON cart.product_id = products.id
-
-    WHERE cart.user_id=%s
-    """, (session["user_id"],))
-
-    cart_items = cursor.fetchall()
-
-    grand_total = sum(item[6] for item in cart_items)
-
-    cursor.close()
+    grand_total = sum(
+        item.product.price * item.quantity
+        for item in cart_items
+    )
 
     return render_template(
         "cart.html",
@@ -156,56 +158,43 @@ def cart():
 # ==========================
 # Increase Cart Item Quantity
 # ==========================
-@app.route("/increase/<int:cart_id>")
-def increase(cart_id):
+@app.route("/increase/<int:id>")
+def increase(id):
 
-    cursor = mysql.connection.cursor()
+    item = Cart.query.get_or_404(id)
 
-    cursor.execute("""
-    UPDATE cart
-    SET quantity = quantity + 1
-    WHERE id=%s
-    """, (cart_id,))
+    item.quantity += 1
 
-    mysql.connection.commit()
-    cursor.close()
+    db.session.commit()
 
-    return redirect("/cart")
+    return redirect(url_for("cart"))
 # ==========================
 # Decrease Cart Item Quantity
 # ==========================
-@app.route("/decrease/<int:cart_id>")
-def decrease(cart_id):
+@app.route("/decrease/<int:id>")
+def decrease(id):
 
-    cursor = mysql.connection.cursor()
+    item = Cart.query.get_or_404(id)
 
-    cursor.execute("""
-    UPDATE cart
-    SET quantity = quantity - 1
-    WHERE id=%s AND quantity>1
-    """, (cart_id,))
+    if item.quantity > 1:
+        item.quantity -= 1
 
-    mysql.connection.commit()
-    cursor.close()
+    db.session.commit()
 
-    return redirect("/cart")
+    return redirect(url_for("cart"))
 # ==========================
 # Remove Cart Item
 # ==========================
-@app.route("/remove/<int:cart_id>")
-def remove(cart_id):
+@app.route("/remove/<int:id>")
+def remove(id):
 
-    cursor = mysql.connection.cursor()
+    item = Cart.query.get_or_404(id)
 
-    cursor.execute("""
-    DELETE FROM cart
-    WHERE id=%s
-    """, (cart_id,))
+    db.session.delete(item)
 
-    mysql.connection.commit()
-    cursor.close()
+    db.session.commit()
 
-    return redirect("/cart")
+    return redirect(url_for("cart"))
 # ==========================
 # Register User
 # ==========================
