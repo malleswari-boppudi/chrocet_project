@@ -36,6 +36,17 @@
             color: white;
         }
 
+        .btn-shop {
+            background: #c06c84;
+            color: white;
+            border-radius: 30px;
+            padding: 12px 30px;
+        }
+
+        .btn-shop:hover {
+            background: #a44f69;
+            color: white;
+        }
         .product-image {
             border-radius: 15px;
             box-shadow: 0 10px 20px rgba(0, 0, 0, .1);
@@ -204,8 +215,8 @@
                 </div>
 
                 <div>
-                    <form action="/add_to_cart/{{ product.id }}" method="POST">
-                                <button type="submit" class="btn btn-shop w-100 mt-3">Add to Cart</button>
+                   <form action="/add_to_cart/{{ product.id }}" method="POST">
+                                <button type="submit" class="btn btn-shop btn-lg">Add to Cart</button>
                             </form>
 
                     <button class="btn btn-success btn-lg">
