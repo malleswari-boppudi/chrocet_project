@@ -1,6 +1,14 @@
 from flask import Flask, render_template, request, redirect, url_for
 
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from config import Config
+
 app = Flask(__name__)
+
+app.config.from_object(Config)
+
+db = SQLAlchemy(app)
 
 EMAIL = "admin@gmail.com"
 PASSWORD = "admin123"
@@ -53,6 +61,19 @@ def register():
 @app.route("/product")
 def product():
     return render_template("product-details.html")
+
+@app.route("/testdb")
+def test():
+
+    try:
+
+        db.session.execute(db.text("SELECT 1"))
+
+        return "Database Connected Successfully"
+
+    except Exception as e:
+
+        return str(e)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
