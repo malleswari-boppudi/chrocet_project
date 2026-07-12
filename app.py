@@ -78,8 +78,7 @@ def product(id):
         product=product,
         username=username
     )
-
-
+    
 # ==========================
 # Register User
 # ==========================
